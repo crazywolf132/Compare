@@ -1,23 +1,30 @@
+// 
+// Decompiled by Procyon v0.5.30
+// 
+
 package com.mojang.ld22.level.tile;
 
 import com.mojang.ld22.entity.AirWizard;
 import com.mojang.ld22.entity.Entity;
-import com.mojang.ld22.gfx.Screen;
 import com.mojang.ld22.level.Level;
+import com.mojang.ld22.gfx.Screen;
 
-public class InfiniteFallTile extends Tile {
-	public InfiniteFallTile(int id) {
-		super(id);
-	}
-
-	public void render(Screen screen, Level level, int x, int y) {
-	}
-
-	public void tick(Level level, int xt, int yt) {
-	}
-
-	public boolean mayPass(Level level, int x, int y, Entity e) {
-		if (e instanceof AirWizard) return true;
-		return false;
-	}
+public class InfiniteFallTile extends Tile
+{
+    public InfiniteFallTile(final int id) {
+        super(id);
+    }
+    
+    @Override
+    public void render(final Screen screen, final Level level, final int x, final int y) {
+    }
+    
+    @Override
+    public void tick(final Level level, final int xt, final int yt) {
+    }
+    
+    @Override
+    public boolean mayPass(final Level level, final int x, final int y, final Entity e) {
+        return e instanceof AirWizard;
+    }
 }

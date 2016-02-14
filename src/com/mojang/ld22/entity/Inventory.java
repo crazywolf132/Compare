@@ -3,15 +3,18 @@ package com.mojang.ld22.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.mojang.ld22.item.Experience;
 import com.mojang.ld22.item.Item;
 import com.mojang.ld22.item.ResourceItem;
 import com.mojang.ld22.item.resource.Resource;
+import com.mojang.ld22.item.FurnitureItem;
 
 public class Inventory {
 	public List<Item> items = new ArrayList<Item>();
 
 	public void add(Item item) {
 		add(items.size(), item);
+
 	}
 
 	public void add(int slot, Item item) {
@@ -24,7 +27,9 @@ public class Inventory {
 				has.count += toTake.count;
 			}
 		} else {
-			items.add(slot, item);
+			if(!(item instanceof Experience)) {
+				items.add(slot, item);
+			}
 		}
 	}
 
@@ -54,11 +59,26 @@ public class Inventory {
 	}
 
 	public int count(Item item) {
+		int count = 0;
 		if (item instanceof ResourceItem) {
 			ResourceItem ri = findResource(((ResourceItem)item).resource);
 			if (ri!=null) return ri.count;
+		
+		} else if (item instanceof FurnitureItem) {
+		    FurnitureItem fur = (FurnitureItem) item;
+		    
+			for (int i=0; i<items.size(); i++) {
+				if (items.get(i) instanceof FurnitureItem) {
+				  FurnitureItem fur2 = (FurnitureItem) items.get(i);
+				  if (fur.furniture.getClass() == fur2.furniture.getClass() ) {
+					count++;
+				  }
+				}
+			}		    
+		    return count;
+		
 		} else {
-			int count = 0;
+			count = 0;
 			for (int i=0; i<items.size(); i++) {
 				if (items.get(i).matches(item)) count++;
 			}

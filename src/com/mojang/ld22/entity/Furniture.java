@@ -1,58 +1,104 @@
+// 
+// Decompiled by Procyon v0.5.30
+// 
+
 package com.mojang.ld22.entity;
 
 import com.mojang.ld22.gfx.Screen;
 import com.mojang.ld22.item.FurnitureItem;
 import com.mojang.ld22.item.PowerGloveItem;
 
-public class Furniture extends Entity {
-	private int pushTime = 0;
-	private int pushDir = -1;
-	public int col, sprite;
-	public String name;
-	private Player shouldTake;
-
-	public Furniture(String name) {
-		this.name = name;
-		xr = 3;
-		yr = 3;
-	}
-
-	public void tick() {
-		if (shouldTake != null) {
-			if (shouldTake.activeItem instanceof PowerGloveItem) {
-				remove();
-				shouldTake.inventory.add(0, shouldTake.activeItem);
-				shouldTake.activeItem = new FurnitureItem(this);
-			}
-			shouldTake = null;
-		}
-		if (pushDir == 0) move(0, +1);
-		if (pushDir == 1) move(0, -1);
-		if (pushDir == 2) move(-1, 0);
-		if (pushDir == 3) move(+1, 0);
-		pushDir = -1;
-		if (pushTime > 0) pushTime--;
-	}
-
-	public void render(Screen screen) {
-		screen.render(x - 8, y - 8 - 4, sprite * 2 + 8 * 32, col, 0);
-		screen.render(x - 0, y - 8 - 4, sprite * 2 + 8 * 32 + 1, col, 0);
-		screen.render(x - 8, y - 0 - 4, sprite * 2 + 8 * 32 + 32, col, 0);
-		screen.render(x - 0, y - 0 - 4, sprite * 2 + 8 * 32 + 33, col, 0);
-	}
-
-	public boolean blocks(Entity e) {
-		return true;
-	}
-
-	protected void touchedBy(Entity entity) {
-		if (entity instanceof Player && pushTime == 0) {
-			pushDir = ((Player) entity).dir;
-			pushTime = 10;
-		}
-	}
-
-	public void take(Player player) {
-		shouldTake = player;
-	}
+public class Furniture extends Entity
+{
+    private int pushTime;
+    private int pushDir;
+    public int col;
+    public int sprite;
+    private Player shouldTake;
+    
+    public Furniture(final String name) {
+        super(name);
+        this.pushTime = 0;
+        this.pushDir = -1;
+        this.name = name;
+        this.xr = 3;
+        this.yr = 3;
+    }
+    
+    @Override
+    public void tick() {
+        if (this.shouldTake != null) {
+            if (this.shouldTake.activeItem instanceof PowerGloveItem) {
+                this.remove();
+                this.shouldTake.inventory.add(0, this.shouldTake.activeItem);
+                this.shouldTake.activeItem = new FurnitureItem(this);
+            }
+            this.shouldTake = null;
+        }
+        if (this.pushDir == 0) {
+            this.move(0, 1);
+        }
+        if (this.pushDir == 1) {
+            this.move(0, -1);
+        }
+        if (this.pushDir == 2) {
+            this.move(-1, 0);
+        }
+        if (this.pushDir == 3) {
+            this.move(1, 0);
+        }
+        this.pushDir = -1;
+        if (this.pushTime > 0) {
+            --this.pushTime;
+        }
+    }
+    
+    @Override
+    public void render(final Screen screen) {
+        if (this instanceof Torch) {
+            if (((Torch)this).on) {
+                screen.render(this.x - 8, this.y - 8 - 4, 51, this.col, 0);
+                screen.render(this.x - 0, this.y - 8 - 4, 52, this.col, 0);
+                screen.render(this.x - 8, this.y - 0 - 4, 83, this.col, 0);
+                screen.render(this.x - 0, this.y - 0 - 4, 84, this.col, 0);
+            }
+            else {
+                screen.render(this.x - 8, this.y - 8 - 4, this.sprite * 2 + 256, this.col, 0);
+                screen.render(this.x - 0, this.y - 8 - 4, this.sprite * 2 + 256 + 1, this.col, 0);
+                screen.render(this.x - 8, this.y - 0 - 4, this.sprite * 2 + 256 + 32, this.col, 0);
+                screen.render(this.x - 0, this.y - 0 - 4, this.sprite * 2 + 256 + 33, this.col, 0);
+            }
+        }
+        else {
+            screen.render(this.x - 8, this.y - 8 - 4, this.sprite * 2 + 256, this.col, 0);
+            screen.render(this.x - 0, this.y - 8 - 4, this.sprite * 2 + 256 + 1, this.col, 0);
+            screen.render(this.x - 8, this.y - 0 - 4, this.sprite * 2 + 256 + 32, this.col, 0);
+            screen.render(this.x - 0, this.y - 0 - 4, this.sprite * 2 + 256 + 33, this.col, 0);
+        }
+    }
+    
+    @Override
+    public boolean blocks(final Entity e) {
+        return true;
+    }
+    
+    @Override
+    protected void touchedBy(final Entity entity) {
+        if (entity instanceof Player && this.pushTime == 0) {
+            this.pushDir = ((Player)entity).dir;
+            if (((Player)entity).activeItem instanceof PowerGloveItem) {
+                this.pushTime = 3;
+            }
+            else {
+                this.pushTime = 10;
+            }
+            if (((Player)entity).game.mpstate == 2) {
+                ((Player)entity).game.server.updatefurnature();
+            }
+        }
+    }
+    
+    public void take(final Player player) {
+        this.shouldTake = player;
+    }
 }

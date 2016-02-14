@@ -1,76 +1,128 @@
-package com.mojang.ld22.level.tile;
+// 
+// Decompiled by Procyon v0.5.30
+// 
 
-import java.util.Random;
+package com.mojang.ld22.level.tile;
 
 import com.mojang.ld22.entity.Entity;
 import com.mojang.ld22.gfx.Color;
-import com.mojang.ld22.gfx.Screen;
 import com.mojang.ld22.level.Level;
+import com.mojang.ld22.gfx.Screen;
+import java.util.Random;
 
-public class LavaTile extends Tile {
-	public LavaTile(int id) {
-		super(id);
-		connectsToSand = true;
-		connectsToLava = true;
-	}
-
-	private Random wRandom = new Random();
-
-	public void render(Screen screen, Level level, int x, int y) {
-		wRandom.setSeed((tickCount + (x / 2 - y) * 4311) / 10 * 54687121l + x * 3271612l + y * 3412987161l);
-		int col = Color.get(500, 500, 520, 550);
-		int transitionColor1 = Color.get(3, 500, level.dirtColor - 111, level.dirtColor);
-		int transitionColor2 = Color.get(3, 500, level.sandColor - 110, level.sandColor);
-
-		boolean u = !level.getTile(x, y - 1).connectsToLava;
-		boolean d = !level.getTile(x, y + 1).connectsToLava;
-		boolean l = !level.getTile(x - 1, y).connectsToLava;
-		boolean r = !level.getTile(x + 1, y).connectsToLava;
-
-		boolean su = u && level.getTile(x, y - 1).connectsToSand;
-		boolean sd = d && level.getTile(x, y + 1).connectsToSand;
-		boolean sl = l && level.getTile(x - 1, y).connectsToSand;
-		boolean sr = r && level.getTile(x + 1, y).connectsToSand;
-
-		if (!u && !l) {
-			screen.render(x * 16 + 0, y * 16 + 0, wRandom.nextInt(4), col, wRandom.nextInt(4));
-		} else
-			screen.render(x * 16 + 0, y * 16 + 0, (l ? 14 : 15) + (u ? 0 : 1) * 32, (su || sl) ? transitionColor2 : transitionColor1, 0);
-
-		if (!u && !r) {
-			screen.render(x * 16 + 8, y * 16 + 0, wRandom.nextInt(4), col, wRandom.nextInt(4));
-		} else
-			screen.render(x * 16 + 8, y * 16 + 0, (r ? 16 : 15) + (u ? 0 : 1) * 32, (su || sr) ? transitionColor2 : transitionColor1, 0);
-
-		if (!d && !l) {
-			screen.render(x * 16 + 0, y * 16 + 8, wRandom.nextInt(4), col, wRandom.nextInt(4));
-		} else
-			screen.render(x * 16 + 0, y * 16 + 8, (l ? 14 : 15) + (d ? 2 : 1) * 32, (sd || sl) ? transitionColor2 : transitionColor1, 0);
-		if (!d && !r) {
-			screen.render(x * 16 + 8, y * 16 + 8, wRandom.nextInt(4), col, wRandom.nextInt(4));
-		} else
-			screen.render(x * 16 + 8, y * 16 + 8, (r ? 16 : 15) + (d ? 2 : 1) * 32, (sd || sr) ? transitionColor2 : transitionColor1, 0);
-	}
-
-	public boolean mayPass(Level level, int x, int y, Entity e) {
-		return e.canSwim();
-	}
-
-	public void tick(Level level, int xt, int yt) {
-		int xn = xt;
-		int yn = yt;
-
-		if (random.nextBoolean())
-			xn += random.nextInt(2) * 2 - 1;
-		else
-			yn += random.nextInt(2) * 2 - 1;
-
-		if (level.getTile(xn, yn) == Tile.hole) {
-			level.setTile(xn, yn, this, 0);
-		}
-	}
-
-	public int getLightRadius(Level level, int x, int y) {
-		return 6;
-	}
+public class LavaTile extends Tile
+{
+    private Random wRandom;
+    
+    public LavaTile(final int id) {
+        super(id);
+        this.wRandom = new Random();
+        this.connectsToSand = true;
+        this.connectsToLava = true;
+    }
+    
+    @Override
+    public void render(final Screen screen, final Level level, final int x, final int y) {
+        this.wRandom.setSeed((LavaTile.tickCount + (x / 2 - y) * 4311) / 10 * 54687121L + x * 3271612L + y * 3412987161L);
+        final int col = Color.get(500, 500, 520, 550);
+        final int transitionColor1 = Color.get(3, 500, level.dirtColor - 111, level.dirtColor);
+        final int transitionColor2 = Color.get(3, 500, level.sandColor - 110, level.sandColor);
+        final boolean u = !level.getTile(x, y - 1).connectsToLava;
+        final boolean d = !level.getTile(x, y + 1).connectsToLava;
+        final boolean l = !level.getTile(x - 1, y).connectsToLava;
+        final boolean r = !level.getTile(x + 1, y).connectsToLava;
+        final boolean su = u && level.getTile(x, y - 1).connectsToSand;
+        final boolean sd = d && level.getTile(x, y + 1).connectsToSand;
+        final boolean sl = l && level.getTile(x - 1, y).connectsToSand;
+        final boolean sr = r && level.getTile(x + 1, y).connectsToSand;
+        if (!u && !l) {
+            screen.render(x * 16 + 0, y * 16 + 0, this.wRandom.nextInt(4), col, this.wRandom.nextInt(4));
+        }
+        else {
+            screen.render(x * 16 + 0, y * 16 + 0, (l ? 14 : 15) + (u ? 0 : 1) * 32, (su || sl) ? transitionColor2 : transitionColor1, 0);
+        }
+        if (!u && !r) {
+            screen.render(x * 16 + 8, y * 16 + 0, this.wRandom.nextInt(4), col, this.wRandom.nextInt(4));
+        }
+        else {
+            screen.render(x * 16 + 8, y * 16 + 0, (r ? 16 : 15) + (u ? 0 : 1) * 32, (su || sr) ? transitionColor2 : transitionColor1, 0);
+        }
+        if (!d && !l) {
+            screen.render(x * 16 + 0, y * 16 + 8, this.wRandom.nextInt(4), col, this.wRandom.nextInt(4));
+        }
+        else {
+            screen.render(x * 16 + 0, y * 16 + 8, (l ? 14 : 15) + (d ? 2 : 1) * 32, (sd || sl) ? transitionColor2 : transitionColor1, 0);
+        }
+        if (!d && !r) {
+            screen.render(x * 16 + 8, y * 16 + 8, this.wRandom.nextInt(4), col, this.wRandom.nextInt(4));
+        }
+        else {
+            screen.render(x * 16 + 8, y * 16 + 8, (r ? 16 : 15) + (d ? 2 : 1) * 32, (sd || sr) ? transitionColor2 : transitionColor1, 0);
+        }
+        super.render(screen, level, x, y);
+    }
+    
+    @Override
+    public boolean mayPass(final Level level, final int x, final int y, final Entity e) {
+        return e.canSwim();
+    }
+    
+    @Override
+    public void tick(final Level level, final int xt, final int yt) {
+        int xn = xt;
+        int yn = yt;
+        if (this.random.nextBoolean()) {
+            xn += this.random.nextInt(2) * 2 - 1;
+        }
+        else {
+            yn += this.random.nextInt(2) * 2 - 1;
+        }
+        if (level.getTile(xn, yn) == Tile.hole) {
+            level.setTile(xn, yn, this, 0);
+        }
+        if (level.fireTicks[xt][yt] > 0) {
+            final int[] array = level.fireTicks[xt];
+            array[yt] -= 2;
+            if (level.fireTicks[xt][yt] % 10 == 0) {
+                switch (this.random.nextInt(4)) {
+                    case 0: {
+                        if (xt - 1 >= 0) {
+                            level.fireTicks[xt - 1][yt] = level.fireTicks[xt][yt];
+                            break;
+                        }
+                        break;
+                    }
+                    case 1: {
+                        if (xt + 1 < level.w) {
+                            level.fireTicks[xt + 1][yt] = level.fireTicks[xt][yt];
+                            break;
+                        }
+                        break;
+                    }
+                    case 2: {
+                        if (yt - 1 >= 0) {
+                            level.fireTicks[xt][yt - 1] = level.fireTicks[xt][yt];
+                            break;
+                        }
+                        break;
+                    }
+                    case 3: {
+                        if (yt + 1 < level.h) {
+                            level.fireTicks[xt][yt + 1] = level.fireTicks[xt][yt];
+                            break;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        else if (level.fireTicks[xt][yt] < 0 || !this.canBurn()) {
+            level.fireTicks[xt][yt] = 20;
+        }
+    }
+    
+    @Override
+    public int getLightRadius(final Level level, final int x, final int y) {
+        return 6;
+    }
 }

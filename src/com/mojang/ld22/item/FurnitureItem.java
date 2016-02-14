@@ -1,62 +1,80 @@
+// 
+// Decompiled by Procyon v0.5.30
+// 
+
 package com.mojang.ld22.item;
 
-import com.mojang.ld22.entity.Furniture;
-import com.mojang.ld22.entity.ItemEntity;
+import de.thejackimonster.ld22.leveltree.Achievement;
+import com.mojang.ld22.entity.Entity;
 import com.mojang.ld22.entity.Player;
-import com.mojang.ld22.gfx.Color;
-import com.mojang.ld22.gfx.Font;
-import com.mojang.ld22.gfx.Screen;
 import com.mojang.ld22.level.Level;
 import com.mojang.ld22.level.tile.Tile;
+import com.mojang.ld22.entity.ItemEntity;
+import com.mojang.ld22.gfx.Font;
+import com.mojang.ld22.gfx.Color;
+import com.mojang.ld22.gfx.Screen;
+import com.mojang.ld22.entity.Furniture;
 
-public class FurnitureItem extends Item {
-	public Furniture furniture;
-	public boolean placed = false;
-
-	public FurnitureItem(Furniture furniture) {
-		this.furniture = furniture;
-	}
-
-	public int getColor() {
-		return furniture.col;
-	}
-
-	public int getSprite() {
-		return furniture.sprite + 10 * 32;
-	}
-
-	public void renderIcon(Screen screen, int x, int y) {
-		screen.render(x, y, getSprite(), getColor(), 0);
-	}
-
-	public void renderInventory(Screen screen, int x, int y) {
-		screen.render(x, y, getSprite(), getColor(), 0);
-		Font.draw(furniture.name, screen, x + 8, y, Color.get(-1, 555, 555, 555));
-	}
-
-	public void onTake(ItemEntity itemEntity) {
-	}
-
-	public boolean canAttack() {
-		return false;
-	}
-
-	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
-		if (tile.mayPass(level, xt, yt, furniture)) {
-			furniture.x = xt * 16 + 8;
-			furniture.y = yt * 16 + 8;
-			level.add(furniture);
-			placed = true;
-			return true;
-		}
-		return false;
-	}
-
-	public boolean isDepleted() {
-		return placed;
-	}
-	
-	public String getName() {
-		return furniture.name;
-	}
+public class FurnitureItem extends Item
+{
+    public Furniture furniture;
+    public boolean placed;
+    
+    public FurnitureItem(final Furniture furniture) {
+        super(furniture.name);
+        this.placed = false;
+        this.furniture = furniture;
+    }
+    
+    @Override
+    public int getColor() {
+        return this.furniture.col;
+    }
+    
+    @Override
+    public int getSprite() {
+        return this.furniture.sprite + 320;
+    }
+    
+    @Override
+    public void renderIcon(final Screen screen, final int x, final int y) {
+        screen.render(x, y, this.getSprite(), this.getColor(), 0);
+    }
+    
+    @Override
+    public void renderInventory(final Screen screen, final int x, final int y) {
+        screen.render(x, y, this.getSprite(), this.getColor(), 0);
+        Font.draw(this.furniture.name, screen, x + 8, y, Color.get(-1, 555, 555, 555));
+    }
+    
+    @Override
+    public void onTake(final ItemEntity itemEntity) {
+    }
+    
+    @Override
+    public boolean canAttack() {
+        return false;
+    }
+    
+    @Override
+    public boolean interactOn(final Tile tile, final Level level, final int xt, final int yt, final Player player, final int attackDir) {
+        if (tile.mayPass(level, xt, yt, this.furniture)) {
+            this.furniture.x = xt * 16 + 8;
+            this.furniture.y = yt * 16 + 8;
+            level.add(this.furniture);
+            Achievement.crafting.Done(player.game);
+            return this.placed = true;
+        }
+        return false;
+    }
+    
+    @Override
+    public boolean isDepleted() {
+        return this.placed;
+    }
+    
+    @Override
+    public String getName() {
+        return this.furniture.name;
+    }
 }
